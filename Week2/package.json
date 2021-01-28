@@ -1,0 +1,23 @@
+{
+  "name": "week2",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "week2 exercise",
+  "main": "server/wsgi.js",
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "elliptic": "^6.5.2"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leomarlo/blockchain_playground/week2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Leonhard Horstmeyer",
+  "license": "MIT"
+}

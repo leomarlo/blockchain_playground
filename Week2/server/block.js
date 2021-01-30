@@ -1,6 +1,8 @@
 class Block {
-    constructor(prevHash){
-        this.prevHash = prevHash;
+    constructor(id){
+        this.id
+        this.transactions
+        this.prevHash = null;
     }
 }
 

@@ -1,9 +1,8 @@
-import Blockchain from "./blockchain.js"
-import {Block} from "./block.js"
+import db from "./db.js"
+// import {Block} from "./block.js"
 
 
-const BC = new Blockchain();
-BC.addTransactions()
-BC.mine()
+db.blockchain.addTransactions()
+db.blockchain.mine()
 console.log('hallo')
 // console.log(bc.blocks)

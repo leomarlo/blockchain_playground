@@ -1,4 +1,4 @@
-import config from "../config.js";
+import config from "./config.js";
 import db from "./db.js"
 
 function getBalance(address) {
@@ -6,7 +6,7 @@ function getBalance(address) {
         return tx.owner === address && (!tx.spent);
     })
     const sum = ourUTXOS.reduce((a,c)=> {return a + c.amount}, 0);
-    return sum + " " + config.CURRENCY;
+    return sum + " " + db.CURRENCY;
 }
 
 export default getBalance;

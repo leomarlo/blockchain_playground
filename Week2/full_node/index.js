@@ -2,7 +2,7 @@
 import {startMining, stopMining} from "./mine.js"
 import getBalance from "./balance.js"
 import jayson from "jayson"
-import config from "../config.js"
+import config from "./config.js"
 // import {Block} from "./block.js"
 
 const server = jayson.server({

@@ -1,6 +1,6 @@
 import db from "./db.js"
 import Block from "./models/block.js"
-import config from "../config.js"
+import config from "./config.js"
 import sha256 from 'crypto-js/sha256.js'
 import TXO from "./models/txo.js"
 import Transaction from "./models/transaction.js"
@@ -23,7 +23,7 @@ function mine(){
     
     const block = new Block()
     block.id = db.blockchain.BlockHeight()
-    const coinbaseutxo = new TXO(config.PUBLIC, config.BLOCKREWARD)
+    const coinbaseutxo = new TXO(config.PUBLIC, db.BLOCKREWARD)
     const utxo = new Transaction([], [coinbaseutxo])
 
     block.addTransaction(utxo)
@@ -33,7 +33,7 @@ function mine(){
     //     block.addTransaction(db.blockchain.mempool.pop())
     // }
     // block.addTransactions() = transactions
-    while(BigInt("0x" + block.hash()) >= BigInt(config.TARGET_DIFFICULTY)){
+    while(BigInt("0x" + block.hash()) >= BigInt(db.TARGET_DIFFICULTY)){
         block.nonce++;
     }
 

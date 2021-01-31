@@ -1,7 +1,9 @@
-import Blockchain from "./blockchain.js"
+import Blockchain from "./models/blockchain.js"
+// screenTop
 
 const db = {
-    blockchain: new Blockchain()
+    blockchain: new Blockchain(),
+    utxos: [],
 }
 
 export default db;

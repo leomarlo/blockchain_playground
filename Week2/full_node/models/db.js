@@ -7,4 +7,4 @@ class DB {
     }
 }
 
-export default db;
+export default DB;

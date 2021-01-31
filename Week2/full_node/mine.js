@@ -1,4 +1,4 @@
-import db from "./db.js"
+import db from "./models/db.js"
 import Block from "./models/block.js"
 import config from "./config.js"
 import sha256 from 'crypto-js/sha256.js'

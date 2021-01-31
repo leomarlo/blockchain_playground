@@ -5,13 +5,14 @@ const ec = new elliptic.ec('secp256k1');
 import DB from "../models/db.js"
 import TXO from "../models/txo.js"
 import Transaction from "../models/transaction.js"
+import Block from "../models/block.js";
 
 class User {
 
     constructor(port) {
         this.port = port;
         // personal copy of the database
-        this.db = DB();
+        this.db = new DB();
         // personal copy of utxos
         this.my_utxos = [];
         this.my_funds = 0;
@@ -39,7 +40,8 @@ class User {
         this.server = jayson.server({
             sendDB: function([address], callback) {
                 console.log(self.db)
-                callback(null, db_obj)
+                console.log('this was my db, happy now?')
+                callback(null, self.db)
             }
         })
         
@@ -78,14 +80,19 @@ class User {
 
     // pull the database from the other full_nodes
     demandDB(address){
+        // console.log(`The address is ${address}`)
         const self = this;
-        console.log(this.channels)
+        // console.log(this.channels)
         const client = this.channels[address]
-        client.request('sendDB',[this.publicKey], function(err, response) {
+        // console.log(client)
+        client.request('this.sendDB',[], function(err, response) {
             if(err) throw err;
             if (response.result) {
                 // persist it to a file or just load it into RAM
                 // or just update the db. here we replace it completely
+                const new_db_obj = response.result
+                console.log('see the resulting db is ')
+                console.log(new_db_obj)
                 return response.result;
             } 
             else {
@@ -99,15 +106,16 @@ class User {
         // should be validated for internal consistency
         return true;
     }
+
     updateDbFrom(new_db) {
         // check whether there are new blocks or new transactions
-        if (new_db.blockchain.length > this.db.blockchain.length){
+        if (new_db.blockchain.blocks.length > this.db.blockchain.blocks.length){
             // probably its just one block up.
             for (let j=0; j<this.db.blockchain.length; j++){
                 if (this.db.blockchain[j].hash() != new_db.blockchain[j].hash()){
                     // either I am on an orphant branch or this guy is
                     // in this case stick to my version
-                    return this.db
+                    return 
                 }
             }
             // get all the transactions in the blocks ahead (could be more than one)
@@ -129,21 +137,44 @@ class User {
         }
     }
 
+    isMaterialForUpdating(new_db, old_db){
+        return true;
+    }
+
+    stopNewDBBot(){this.getNewDBBotDisabled = true}
+    startNewDBBot(){
+        this.getNewDBBotDisabled = false;
+        this.getNewDBBot()
+    }
     getNewDBBot() {
         if (this.getNewDBBotDisabled){return}
         // go through all nodes that you know, ask them for the db and check if there's anything new
         const peers = Object.keys(global.ADDRESS_TO_PORT)
+        console.log(`my key is ${this.publicKey}`)
         for (let i=0; i<peers.length; i++){
             if (this.publicKey === peers[i]) {continue}
-                const new_db = this.demandDB(peers[i])
-                if (!this.isMaterialForUpdating(new_db, this.db)){
-                    // check if the new db is legit
-                    if (!this.isLegidBlockchain(new_db)){continue}
-                    this.updateDbFrom(new_db)
-                }
+            const new_db = this.demandDB(peers[i])
+            console.log(`we found a peer called ${peers[i]} and his db is`)
+            console.log(new_db)
+            if (this.isMaterialForUpdating(new_db, this.db)){
+                // check if the new db is legit
+                if (!this.isLegidBlockchain(new_db)){continue}
+                this.updateDbFrom(new_db)
+                console.log(`updated DB from ${peers[i]}`)
+            }
         }
+        setTimeout(()=>this.getNewDBBot(),100)
     }
 
+    
+    eswerdelicht() {
+        // create genesis block
+        const genesis = new Block()
+        genesis.id = 0;
+        genesis.transactions = [new Transaction([],new TXO(this.publicKey,global.GENESIS_REWARD),0)]
+        // not mined yet. just checking if it kind of works
+        this.db.blockchain.addBlock(genesis)
+    }
 
     sendTransaction(recipient, amount){
         // create UTXOs from amount
@@ -205,6 +236,7 @@ class User {
 
     sendRandomTransaction(){
         const recipients = Object.keys(global.ADDRESS_TO_PORT)
+        if (recipients.length<=1) {return}
         let recipient = this.publicKey
         while (recipient === this.publicKey) {
             const chosen_index = Math.floor(recipients.length * Math.random());

@@ -1,6 +1,7 @@
 import Block from "./block.js";
 import elliptic from 'elliptic';
 import crypto from 'crypto-js';
+import global from '../../global.js'
 
 const EC = elliptic.ec;
 const SHA256 = crypto.sha256;
@@ -16,6 +17,7 @@ class Blockchain {
         // const genesis = {id: 0}
         this.blocks = [genesis];
         this.mempool = []; 
+        this.TARGET_DIFFICULTY = global.TARGET_DIFFICULTY;
         // cannot call methods from within the class, because the class has not been read yet.
     }
 

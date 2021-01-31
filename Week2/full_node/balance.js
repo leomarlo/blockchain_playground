@@ -1,5 +1,5 @@
 import config from "./config.js";
-import db from "./db.js"
+import db from "./models/db.js"
 
 function getBalance(address) {
     const ourUTXOS = db.utxos.filter(tx=>{

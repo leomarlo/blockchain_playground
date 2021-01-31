@@ -1,9 +1,10 @@
-import db from "../db.js"
+import db from "./db.js"
 
 class Transaction {
-    constructor(inputs, outputs) {
+    constructor(inputs, outputs, fee) {
         this.inputs = inputs;
         this.outputs = outputs; 
+        this.fee = 0;
     }
     execute() {
         this.inputs.forEach((input)=>{input.spend()})

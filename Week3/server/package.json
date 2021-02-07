@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "crypto": "^1.0.1",
-    "ethers": "^5.0.29"
+    "ethers": "^5.0.29",
+    "plotly": "^1.0.6"
   }
 }

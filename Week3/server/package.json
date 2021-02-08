@@ -12,6 +12,7 @@
   "dependencies": {
     "crypto": "^1.0.1",
     "ethers": "^5.0.29",
+    "jayson": "^3.4.4",
     "plotly": "^1.0.6"
   }
 }

@@ -1,9 +1,10 @@
 import ethers from "ethers";
+import jayson from "jayson";
 import {YOUR_INFURA_PROJECT_ID} from "./config.js"
 
 // Use the mainnet
 const network = "homestead";
-
+const PORT = 3022;
 
 // Specify your own API keys
 // Each is optional, and if you omit it the default
@@ -25,18 +26,38 @@ const provider = ethers.getDefaultProvider(network, {
     // }
 });
 // connect to some provider 
-let resp = null 
-await provider.getBlock(100004).then(dat => {console.log(dat); resp = parseInt(dat.nonce,16)})
-// // console.log(provider.getBlock())
-console.log(resp)
-console.log("hallo")
+async function getTransactionValueOfLastBlock(){
+    let blockn = null
+    let latestblock = null 
+    let tx = null
+    await provider.getBlockNumber().then(function(blockNumber) {
+        blockn = blockNumber
+    }).catch(console.log);
+    await provider.getBlock(blockn).then(dat => {latestblock = dat}).catch(console.log)
+    // // console.log(provider.getBlock())
+    await provider.getTransaction(latestblock.transactions[0]).then(function(transactionReceipt) {
+        console.log(transactionReceipt);
+        tx = transactionReceipt
+    }).catch(console.log);
+
+    return tx ? parseInt(tx.value.toString(),10) * (10 ** (-18)): "not available"
+}
+
+// console.log(blockn)
 
 const server = jayson.server({
     newdata: function(_, callback) {
-        startMining();
+        // startMining();
         callback(null, 'success!')
     }
 })
 
+async function looping() {
+    const result = await getTransactionValueOfLastBlock()
+    console.log(result);
+    setTimeout(looping,  5* 60 * 1000)
+}
 
-server.http().listen(config.PORT)
+looping()
+
+server.http().listen(PORT)
